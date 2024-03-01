@@ -8,6 +8,7 @@ import AppError from './utils/appError.js';
 import globalErrorHandler from './controllers/error.controller.js';
 import morgan from 'morgan';
 import { rootname } from './utils/path.js';
+import surveyRoutes from './router/survey.route.js';
 const app = express();
 
 // 1) GLOBAL MIDDLEWARES
@@ -35,11 +36,11 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // middleware to parse the body of the request into json
-// limit the size of the body to 10kb
-app.use(express.json({ limit: '10kb' }));
+// limit the size of the body to 10mb
+app.use(express.json({ limit: '10mb' }));
 
 // middleware to parse the urlencoded body
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // data sanitization against NoSQL query injection
 app.use(mongoSanitize());
@@ -56,6 +57,7 @@ app.use(
 app.use(express.static(`${rootname}/public`));
 
 // 2) ROUTES
+app.use('/api/survey', surveyRoutes);
 
 // 3) ERROR HANDLING
 app.all('*', (req, res, next) => {
