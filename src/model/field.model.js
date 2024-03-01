@@ -17,6 +17,10 @@ const fieldSchema = new mongoose.Schema({
   question_image: {
     type: String
   },
+  order_index:{
+    type: Number,
+    required: [true, "Field's order index is required."]
+  },
   option: {
     type: [String]
   },
