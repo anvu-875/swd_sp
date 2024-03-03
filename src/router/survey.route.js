@@ -1,5 +1,9 @@
 import { Router } from 'express';
-import { createSurvey } from '../controllers/survey.controller.js';
+import {
+  createSurvey,
+  getAllSurveys,
+  getSurveyById
+} from '../controllers/survey.controller.js';
 import { createFields } from '../controllers/field.controller.js';
 
 const router = Router();
@@ -16,6 +20,7 @@ const router = Router();
             "default_value": "Customer",
             "question_text": "Role",
             "question_image": "",
+            "order_index": 1,
             "option": ["Customer", "Admin", "Staff"]
         },
         {
@@ -23,11 +28,13 @@ const router = Router();
             "default_value": "An",
             "question_text": "Ten",
             "question_image": "",
-            "option": null
+            "order_index": 2,
         }
     ]
 }
 */
-router.route('/').post(createSurvey, createFields);
+router.route('/').post(createSurvey, createFields).get(getAllSurveys);
+
+router.route('/:id').get(getSurveyById);
 
 export default router;

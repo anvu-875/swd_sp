@@ -20,7 +20,7 @@ const campaignShema = new mongoose.Schema({
   status: {
     type: String,
     enum: ['active', 'disabled'],
-    default: 'acitve'
+    default: 'active'
   }
 });
 

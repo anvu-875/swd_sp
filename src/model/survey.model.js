@@ -20,8 +20,8 @@ const surveySchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['acitve', 'disabled'],
-    default: 'acitve'
+    enum: ['active', 'disabled'],
+    default: 'active'
   },
   campaign_id: {
     type: ObjectId,

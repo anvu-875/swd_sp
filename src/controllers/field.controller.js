@@ -10,11 +10,15 @@ export const createFields = catchAsync(async (req, res, next) => {
   res.status(201).json({
     status: 'success',
     data: {
-      id: req.body.id,
-      name: req.body.name,
-      start_time: req.body.start_time,
-      end_time: req.body.end_time,
-      campaign_id: req.body.campaign_id,
+      survey: {
+        id: req.body.id,
+        name: req.body.name,
+        created_time: req.body.created_time,
+        start_time: req.body.start_time,
+        end_time: req.body.end_time,
+        status: req.body.status,
+        campaign_id: req.body.campaign_id
+      },
       fields: results
     }
   });
