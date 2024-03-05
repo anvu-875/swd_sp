@@ -77,7 +77,7 @@ export const getAllFields = catchAsync(async (req, res, next) => {
     if (fieldDB && fieldDB.type !== field.type) {
       await Field.findByIdAndUpdate(field.id, { type: field.type });
     }
-    if (fieldDB && _.isEqual(fieldDB.options, field.options)) {
+    if (fieldDB && !_.isEqual(fieldDB.options, field.options)) {
       await Field.findByIdAndUpdate(field.id, { options: field.options });
     }
   }

@@ -1,13 +1,16 @@
 import { Router } from 'express';
 import {
   getAllRecords,
-  getResponseById
+  getResponseById,
+  getResponseByIdAndDelete
 } from '../controllers/response.controller.js';
 
 const router = Router();
 
 router.route('/all/:surveyId').get(getAllRecords);
 
-router.route('/:surveyId').get(getResponseById);
+router.route('/:responseId').get(getResponseById);
+
+router.route('/:responseId').delete(getResponseByIdAndDelete);
 
 export default router;
