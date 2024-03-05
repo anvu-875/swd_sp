@@ -93,17 +93,18 @@ export const getResponseByIdAndDelete = catchAsync(async (req, res, next) => {
       return next(new AppError('Response not found', 404));
     }
     let surveyId = response.survey_id;
-    let survey = await Survey.findById(surveyId)
-    let baseId = survey.campaign_id
-    const result = await airtableAxios.delete(`${baseId}/${surveyId}/${recordId}`);
-    // let response = await Response.findByIdAndDelete(responseId);
+    let survey = await Survey.findById(surveyId);
+    let baseId = survey.campaign_id;
+    console.log(surveyId,baseId,recordId);
+    const result = await airtableAxios.delete(`/${baseId}/${surveyId}/${recordId}`);
+    let responseDB = await Response.findByIdAndDelete(recordId);
     if (!result) {
       return next(new AppError('Response not found', 404));
     }
     res.status(200).json({
       status:'success',
       data: {
-        result
+        result: result.data
       }
     })
 });
