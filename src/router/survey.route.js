@@ -1,10 +1,12 @@
 import { Router } from 'express';
 import {
-  createSurvey,
   getAllSurveys,
   getSurveyById
 } from '../controllers/survey.controller.js';
-import { createFields } from '../controllers/field.controller.js';
+import {
+  // createFields,
+  getAllFields
+} from '../controllers/field.controller.js';
 
 const router = Router();
 
@@ -18,23 +20,19 @@ const router = Router();
         {
             "type":  "dropdown",
             "default_value": "Customer",
-            "question_text": "Role",
-            "question_image": "",
-            "order_index": 1,
+            "name": "Role",
             "option": ["Customer", "Admin", "Staff"]
         },
         {
             "type":  "text",
             "default_value": "An",
-            "question_text": "Ten",
-            "question_image": "",
-            "order_index": 2,
+            "name": "Ten",
         }
     ]
 }
 */
-router.route('/').post(createSurvey, createFields).get(getAllSurveys);
+router.route('/all/:campaignId').get(getAllSurveys);
 
-router.route('/:id').get(getSurveyById);
+router.route('/:id').get(getSurveyById, getAllFields);
 
 export default router;

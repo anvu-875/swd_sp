@@ -61,9 +61,9 @@ const errorHandler = (err, req, res, next) => {
   err.status = err.status || 'error';
 
   // in development, we want to send the error stack
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV.includes('development')) {
     devError(err, res);
-  } else if (process.env.NODE_ENV === 'production') {
+  } else if (process.env.NODE_ENV.includes('production')) {
     // hard copy of the error object
     let error = { ...err };
     // the condition must be err.name, not error.name
