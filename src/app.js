@@ -10,6 +10,7 @@ import morgan from 'morgan';
 import { rootname } from './utils/path.js';
 import surveyRoutes from './router/survey.route.js';
 import campaignRoutes from './router/campaign.route.js';
+import responseRoutes from './router/response.route.js';
 const app = express();
 
 // 1) GLOBAL MIDDLEWARES
@@ -60,6 +61,7 @@ app.use(express.static(`${rootname}/public`));
 // 2) ROUTES
 app.use('/api/survey', surveyRoutes);
 app.use('/api/campaign', campaignRoutes);
+app.use('/api/response', responseRoutes);
 
 // 3) ERROR HANDLING
 app.all('*', (req, res, next) => {

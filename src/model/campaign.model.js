@@ -1,26 +1,18 @@
 import mongoose from 'mongoose';
-
+// "id": "appDT7fGFGyolY8dQ",
+//                 "name": "Test",
+//                 "permissionLevel": "create"
 const campaignShema = new mongoose.Schema({
+  _id: {
+    type: String,
+    required: [true, "Campaign's id is required."]
+  },
   name: {
     type: String,
     required: [true, "Campaign's name is required."]
   },
-  created_time: {
-    type: Date,
-    default: Date.now()
-  },
-  start_time: {
-    type: Date,
-    required: [true, "Campaign's start time is required."]
-  },
-  end_time: {
-    type: Date,
-    required: [true, "Campaign's end time is required."]
-  },
-  status: {
-    type: String,
-    enum: ['active', 'disabled'],
-    default: 'active'
+  permissionLevel: {
+    type: String
   }
 });
 

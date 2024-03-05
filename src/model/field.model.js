@@ -2,30 +2,26 @@ import { ObjectId } from 'mongodb';
 import mongoose from 'mongoose';
 
 const fieldSchema = new mongoose.Schema({
-  type: {
+  _id: {
     type: String,
-    enum: ['text', 'dropdown', 'star'],
-    required: [true, "Field's type is required."]
+    required: [true, "Field's id is required."]
   },
-  default_value: {
-    type: String
-  },
-  question_text: {
+  name: {
     type: String,
     required: [true, "Field's question text is required."]
   },
-  question_image: {
+  type: {
+    type: String,
+    required: [true, "Field's type is required."]
+  },
+  description: {
     type: String
   },
-  order_index:{
-    type: Number,
-    required: [true, "Field's order index is required."]
-  },
-  option: {
-    type: [String]
+  options: {
+    type: mongoose.Schema.Types.Mixed
   },
   survey_id: {
-    type: ObjectId,
+    type: String,
     ref: 'Survey',
     required: [true, "Survey's id is required."]
   }
