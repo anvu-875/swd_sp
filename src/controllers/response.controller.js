@@ -4,7 +4,7 @@ import AppError from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import _ from 'lodash';
 import { Response } from '../model/response.model.js';
-import {airtableAxios} from '../utils/transferData.js'; 
+import { airtableAxios } from '../utils/transferData.js';
 
 // Initialize Airtable client
 Airtable.configure({
@@ -86,24 +86,32 @@ export const getResponseById = catchAsync(async (req, res, next) => {
 });
 // https://api.airtable.com/v0/{baseId}/{tableIdOrName}/{recordId}
 export const getResponseByIdAndDelete = catchAsync(async (req, res, next) => {
-   
-    let recordId = req.params.responseId
-    let response = await Response.findById(recordId)
-    if (!response) {
-      return next(new AppError('Response not found', 404));
-    }
-    let surveyId = response.survey_id;
-    let survey = await Survey.findById(surveyId)
-    let baseId = survey.campaign_id
-    const result = await airtableAxios.delete(`${baseId}/${surveyId}/${recordId}`);
-    // let response = await Response.findByIdAndDelete(responseId);
-    if (!result) {
-      return next(new AppError('Response not found', 404));
-    }
-    res.status(200).json({
-      status:'success',
+  let recordId = req.params.responseId;
+  let response = await Response.findById(recordId);
+  if (!response) {
+    return next(new AppError('Response not found', 404));
+  }
+  let surveyId = response.survey_id;
+  let survey = await Survey.findById(surveyId);
+  let baseId = survey.campaign_id;
+  let result;
+  try {
+    result = await airtableAxios.delete(`/${baseId}/${surveyId}/${recordId}`);
+  } catch (err) {
+    res.status(parseInt(err.response.status)).json({
       data: {
-        result
+        err
       }
-    })
+    });
+  }
+  // let response = await Response.findByIdAndDelete(responseId);
+  if (!result) {
+    return next(new AppError('Response not found', 404));
+  }
+  res.status(200).json({
+    status: 'success',
+    data: {
+      result: result.data
+    }
+  });
 });
