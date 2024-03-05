@@ -8,6 +8,6 @@ const router = Router();
 
 router.route('/all/:surveyId').get(getAllRecords);
 
-router.route('/:surveyId').get(getResponseById);
+router.route('/:responseId').get(getResponseById);
 
 export default router;

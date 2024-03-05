@@ -71,7 +71,7 @@ export const getAllRecords = catchAsync(async (req, res, next) => {
 });
 
 export const getResponseById = catchAsync(async (req, res, next) => {
-  let responseId = req.params.id;
+  let responseId = req.params.responseId;
   let response = await Response.findById(responseId);
   if (!response) {
     return next(new AppError('Response not found', 404));
