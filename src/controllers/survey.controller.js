@@ -22,7 +22,6 @@ import { Response } from '../model/response.model.js';
 
 export const getAllSurveys = catchAsync(async (req, res, next) => {
   let campaignId = req.params.campaignId;
-  // const surveyAirLib = Airtable.base(campaignId).
   const result = await airtableAxios.get(`/meta/bases/${campaignId}/tables`);
   const tables = result.data.tables;
   for (let survey of tables) {
@@ -90,4 +89,31 @@ export const getSurveyById = catchAsync(async (req, res, next) => {
     description: survey.description
   };
   next();
+});
+
+// https://api.airtable.com/v0/meta/bases/{baseId}/tables/{tableIdOrName}
+export const updateSurveyById = catchAsync(async (req, res, next) => {
+  let surveyId = req.params.id;
+  let survey = await Survey.findById(surveyId);
+  if (!survey) {
+    return next(new AppError('Survey not found', 404));
+  }
+  let campaignId = survey.campaign_id;
+  await airtableAxios.patch(
+    `/meta/bases/${campaignId}/tables/${surveyId}`,
+    req.body
+  );
+  let surveyDB = await Survey.findByIdAndUpdate(surveyId, req.body, {
+    new: true,
+    runValidators: true,
+    projection: {
+      __v: false
+    }
+  });
+  res.status(200).json({
+    status: 'success',
+    data: {
+      survey: surveyDB
+    }
+  });
 });

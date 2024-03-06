@@ -7,15 +7,23 @@ import {
   validateSurveyFieldForCreate,
   validateSurveyFieldForUpdate,
   verifyFields
-} from '../middleware/validateSurveyRes.middleware.js';
+} from '../middleware/validate.middleware.js';
 
 const router = Router();
 
 router
   .route('/create/:surveyId')
-  .post(validateSurveyFieldForCreate, verifyFields, createNewField);
+  .post(
+    validateSurveyFieldForCreate,
+    verifyFields('name', 'description', 'type', 'options'),
+    createNewField
+  );
 
 router
   .route('/:id')
-  .put(validateSurveyFieldForUpdate, verifyFields, updateFieldById);
+  .put(
+    validateSurveyFieldForUpdate,
+    verifyFields('name', 'description'),
+    updateFieldById
+  );
 export default router;

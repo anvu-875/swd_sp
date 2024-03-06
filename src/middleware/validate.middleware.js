@@ -1,6 +1,6 @@
 import { body, validationResult } from 'express-validator';
 import { Survey } from '../model/survey.model.js';
-import { validTypes } from '../model/field.model.js';
+import { Field, validTypes } from '../model/field.model.js';
 import _ from 'lodash';
 
 let optionsBody = undefined;
@@ -68,25 +68,28 @@ const validateOptionsField = async (value, { req }) => {
 export const validateSurveyFieldForCreate = [
   body('name')
     .notEmpty()
-    .withMessage('survey name is required')
+    .withMessage('field name is required')
     .bail()
     .isString()
-    .withMessage('survey name must be a string')
+    .withMessage('field name must be a string')
     .bail()
     .custom(async (value, { req }) => {
-      const isSurveyExist = await Survey.exists({ name: value });
-      if (isSurveyExist) throw new Error('survey name already exist');
+      const isExist = await Field.exists({
+        name: value,
+        survey_id: req.params.surveyId
+      });
+      if (isExist) throw new Error('field name already exist');
     }),
   body('description')
     .optional()
     .isString()
-    .withMessage('survey description must be a string'),
+    .withMessage('field description must be a string'),
   body('type')
     .notEmpty()
-    .withMessage('survey type is required')
+    .withMessage('field type is required')
     .bail()
     .isString()
-    .withMessage('survey type must be a string')
+    .withMessage('field type must be a string')
     .bail()
     .custom(async (value, { req }) => {
       if (!validTypes.includes(value)) {
@@ -102,40 +105,66 @@ export const validateSurveyFieldForUpdate = [
     .optional()
     .bail()
     .isString()
-    .withMessage('survey name must be a string')
+    .withMessage('field name must be a string')
     .bail()
     .custom(async (value, { req }) => {
-      const isSurveyExist = await Survey.exists({ name: value });
-      if (isSurveyExist) throw new Error('survey name already exist');
+      let field = await Field.findById(req.params.id);
+      const isExist = await Field.exists({
+        name: value,
+        survey_id: field.survey_id
+      });
+      if (isExist) throw new Error('field name already exist');
     }),
   body('description')
     .optional()
     .isString()
-    .withMessage('survey description must be a string'),
-  body('type')
-    .optional()
-    .bail()
-    .isString()
-    .withMessage('survey type must be a string')
-    .bail()
-    .custom(async (value, { req }) => {
-      if (!validTypes.includes(value)) {
-        throw new Error('Invalid type');
-      }
-      return true;
-    }),
-  body('options').custom(validateOptionsField)
+    .withMessage('field description must be a string')
 ];
 
-export const verifyFields = (req, res, next) => {
-  optionsBody && (req.body.options = structuredClone(optionsBody));
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-  optionsBody = undefined;
-  next();
-};
+export const validateSurveyForUpdate = [
+  body('name')
+    .optional()
+    .isString()
+    .withMessage('survey name must be a string')
+    .bail()
+    .custom(async (value, { req }) => {
+      let survey = await Survey.findById(req.params.id);
+      const isExist = await Survey.exists({
+        name: value,
+        campaign_id: survey.campaign_id
+      });
+      if (isExist) throw new Error('survey name already exist');
+    }),
+  body('description')
+    .optional()
+    .isString()
+    .withMessage('survey description must be a string')
+];
+
+export const verifyFields =
+  (...allowedFields) =>
+  (req, res, next) => {
+    const receivedFields = Object.keys(req.body);
+    const unknownFields = receivedFields.filter(
+      (field) => !allowedFields.includes(field)
+    );
+    if (unknownFields.length > 0) {
+      return res.status(400).json({
+        statusCode: 400,
+        errors: unknownFields.map((field) => `Unknown field: ${field}`)
+      });
+    }
+    optionsBody && (req.body.options = structuredClone(optionsBody));
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        statusCode: 400,
+        errors: errors.array()
+      });
+    }
+    optionsBody = undefined;
+    next();
+  };
 
 export const selectTypeOptionColors = [
   'blueLight2',
