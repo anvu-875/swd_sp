@@ -1,5 +1,19 @@
-import { ObjectId } from 'mongodb';
 import mongoose from 'mongoose';
+
+export const validTypes = [
+  'singleLineText',
+  'multilineText',
+  'singleSelect',
+  'multipleSelects',
+  'email',
+  'url',
+  'date',
+  'phoneNumber',
+  'multipleAttachments',
+  'checkbox',
+  'singleCollaborator',
+  'rating'
+];
 
 const fieldSchema = new mongoose.Schema({
   _id: {
@@ -12,6 +26,7 @@ const fieldSchema = new mongoose.Schema({
   },
   type: {
     type: String,
+    enum: validTypes,
     required: [true, "Field's type is required."]
   },
   description: {

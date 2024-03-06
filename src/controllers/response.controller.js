@@ -87,18 +87,17 @@ export const getResponseById = catchAsync(async (req, res, next) => {
 // https://api.airtable.com/v0/{baseId}/{tableIdOrName}/{recordId}
 export const getResponseByIdAndDelete = catchAsync(async (req, res, next) => {
   let recordId = req.params.responseId;
-  let response = await Response.findById(recordId);
+  let response = await Response.findById(recordId).populate('survey_id');
   if (!response) {
     return next(new AppError('Response not found', 404));
   }
-  let surveyId = response.survey_id;
-  let survey = await Survey.findById(surveyId);
-  let baseId = survey.campaign_id;
+  let surveyId = response.survey_id._id;
+  let baseId = response.survey_id.campaign_id;
   console.log(surveyId, baseId, recordId);
   const result = await airtableAxios.delete(
     `/${baseId}/${surveyId}/${recordId}`
   );
-  let responseDB = await Response.findByIdAndDelete(recordId);
+  await Response.findByIdAndDelete(recordId);
   if (!result) {
     return next(new AppError('Response not found', 404));
   }

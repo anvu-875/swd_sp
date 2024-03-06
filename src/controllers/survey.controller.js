@@ -45,7 +45,10 @@ export const getAllSurveys = catchAsync(async (req, res, next) => {
       });
     }
   }
-  let surveys = await Survey.find({ campaign_id: campaignId }, { __v: false });
+  let surveys = await Survey.find(
+    { campaign_id: campaignId },
+    { __v: false, campaign_id: false }
+  );
   let listTableId = tables.map((table) => table.id);
   let delFlag = false;
   for (let survey of surveys) {
@@ -57,7 +60,10 @@ export const getAllSurveys = catchAsync(async (req, res, next) => {
     }
   }
   if (delFlag) {
-    surveys = await Survey.find({ campaign_id: campaignId }, { __v: false });
+    surveys = await Survey.find(
+      { campaign_id: campaignId },
+      { __v: false, campaign_id: false }
+    );
   }
   res.status(200).json({
     status: 'success',
@@ -69,7 +75,7 @@ export const getAllSurveys = catchAsync(async (req, res, next) => {
 
 export const getSurveyById = catchAsync(async (req, res, next) => {
   let surveyId = req.params.id;
-  let surveyDB = await Survey.findById(surveyId);
+  let surveyDB = await Survey.findById(surveyId, { __v: false });
   if (!surveyDB) {
     return next(new AppError('Survey not found', 404));
   }
@@ -78,6 +84,10 @@ export const getSurveyById = catchAsync(async (req, res, next) => {
   let tables = result.data.tables;
   let survey = tables.find((table) => table.id === surveyId);
   req.body.survey = survey;
-  req.body.surveyDB = surveyDB;
+  req.body.surveyDB = {
+    _id: surveyDB._id,
+    name: survey.name,
+    description: survey.description
+  };
   next();
 });

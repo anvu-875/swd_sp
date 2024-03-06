@@ -1,5 +1,6 @@
 import { Field } from '../model/field.model.js';
 import { Response } from '../model/response.model.js';
+import { Survey } from '../model/survey.model.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import { airtableAxios } from '../utils/transferData.js';
 import _ from 'lodash';
@@ -81,7 +82,10 @@ export const getAllFields = catchAsync(async (req, res, next) => {
       await Field.findByIdAndUpdate(field.id, { options: field.options });
     }
   }
-  let fieldsDB = await Field.find({ survey_id: surveyId }, { __v: false });
+  let fieldsDB = await Field.find(
+    { survey_id: surveyId },
+    { __v: false, survey_id: false }
+  );
   let listFieldId = fields.map((field) => field.id);
   let delFlag = false;
   for (let fieldDB of fieldsDB) {
@@ -96,7 +100,10 @@ export const getAllFields = catchAsync(async (req, res, next) => {
     }
   }
   if (delFlag) {
-    fieldsDB = await Field.find({ survey_id: surveyId }, { __v: false });
+    fieldsDB = await Field.find(
+      { survey_id: surveyId },
+      { __v: false, survey_id: false }
+    );
   }
 
   res.status(200).json({
@@ -104,6 +111,50 @@ export const getAllFields = catchAsync(async (req, res, next) => {
     data: {
       survey: req.body.surveyDB,
       fields: fieldsDB
+    }
+  });
+});
+
+//https://api.airtable.com/v0/meta/bases/{baseId}/tables/{tableId}/fields
+export const createNewField = catchAsync(async (req, res, next) => {
+  let surveyId = req.params.surveyId;
+  let survey = await Survey.findById(surveyId);
+  if (!survey) {
+    return next(new AppError('Survey not found', 404));
+  }
+  let campaignId = survey.campaign_id;
+  let result = await airtableAxios.post(
+    `/meta/bases/${campaignId}/tables/${surveyId}/fields`,
+    req.body
+  );
+  let field = result.data;
+  field.survey_id = surveyId;
+  field._id = field.id;
+  delete field.id;
+  await Field.create(field);
+  res.status(201).json({
+    status: 'success',
+    data: {
+      field
+    }
+  });
+});
+
+export const updateFieldById = catchAsync(async (req, res, next) => {
+  let fieldId = req.params.id;
+  let field = await Field.findById(fieldId).populate('survey_id');
+  if (!field) {
+    return next(new AppError('Field not found', 404));
+  }
+  let result = await airtableAxios.patch(
+    `/meta/bases/${field.survey_id.campaign_id}/tables/${field.survey_id._id}/fields/${fieldId}`,
+    req.body
+  );
+  await Field.findByIdAndUpdate(fieldId, req.body);
+  res.status(200).json({
+    status: 'success',
+    data: {
+      field: result.data
     }
   });
 });

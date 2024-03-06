@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
-// "id": "appDT7fGFGyolY8dQ",
-//                 "name": "Test",
-//                 "permissionLevel": "create"
+
 const campaignShema = new mongoose.Schema({
   _id: {
     type: String,
