@@ -1,9 +1,11 @@
+import { request } from 'express';
 import { Field } from '../model/field.model.js';
 import { Response } from '../model/response.model.js';
 import { Survey } from '../model/survey.model.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import { airtableAxios } from '../utils/transferData.js';
 import _ from 'lodash';
+import AppError from '../utils/appError.js';
 
 // export const createFields = catchAsync(async (req, res, next) => {
 //   const airBody = {
@@ -150,7 +152,13 @@ export const updateFieldById = catchAsync(async (req, res, next) => {
     `/meta/bases/${field.survey_id.campaign_id}/tables/${field.survey_id._id}/fields/${fieldId}`,
     req.body
   );
-  await Field.findByIdAndUpdate(fieldId, req.body);
+  await Field.findByIdAndUpdate(fieldId, req.body, {
+    new: true,
+    runValidators: true,
+    projection: {
+      __v: false
+    }
+  });
   res.status(200).json({
     status: 'success',
     data: {
