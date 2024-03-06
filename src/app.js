@@ -11,6 +11,7 @@ import { rootname } from './utils/path.js';
 import surveyRoutes from './router/survey.route.js';
 import campaignRoutes from './router/campaign.route.js';
 import responseRoutes from './router/response.route.js';
+import fieldRoutes from './router/field.route.js';
 const app = express();
 
 // 1) GLOBAL MIDDLEWARES
@@ -62,6 +63,7 @@ app.use(express.static(`${rootname}/public`));
 app.use('/api/survey', surveyRoutes);
 app.use('/api/campaign', campaignRoutes);
 app.use('/api/response', responseRoutes);
+app.use('/api/field', fieldRoutes);
 
 // 3) ERROR HANDLING
 app.all('*', (req, res, next) => {
