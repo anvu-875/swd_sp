@@ -12,7 +12,14 @@ import surveyRoutes from './router/survey.route.js';
 import campaignRoutes from './router/campaign.route.js';
 import responseRoutes from './router/response.route.js';
 import fieldRoutes from './router/field.route.js';
+
 const app = express();
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 // 1) GLOBAL MIDDLEWARES
 // set security HTTP headers
