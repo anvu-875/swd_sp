@@ -39,7 +39,7 @@ const router = Router();
 router.route('/all/:campaignId').get(getAllSurveys);
 
 router
-  .route('/:id')
+  .route('/:surveyId')
   .get(getSurveyById, getAllFields)
   .put(
     validateSurveyForUpdate,

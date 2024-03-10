@@ -73,7 +73,7 @@ export const getAllSurveys = catchAsync(async (req, res, next) => {
 });
 
 export const getSurveyById = catchAsync(async (req, res, next) => {
-  let surveyId = req.params.id;
+  let surveyId = req.params.surveyId;
   let surveyDB = await Survey.findById(surveyId, { __v: false });
   if (!surveyDB) {
     return next(new AppError('Survey not found', 404));
@@ -93,7 +93,7 @@ export const getSurveyById = catchAsync(async (req, res, next) => {
 
 // https://api.airtable.com/v0/meta/bases/{baseId}/tables/{tableIdOrName}
 export const updateSurveyById = catchAsync(async (req, res, next) => {
-  let surveyId = req.params.id;
+  let surveyId = req.params.surveyId;
   let survey = await Survey.findById(surveyId);
   if (!survey) {
     return next(new AppError('Survey not found', 404));

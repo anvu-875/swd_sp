@@ -20,7 +20,7 @@ router
   );
 
 router
-  .route('/:id')
+  .route('/:fieldId')
   .put(
     validateSurveyFieldForUpdate,
     verifyFields('name', 'description'),

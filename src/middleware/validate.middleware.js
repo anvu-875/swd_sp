@@ -108,7 +108,7 @@ export const validateSurveyFieldForUpdate = [
     .withMessage('field name must be a string')
     .bail()
     .custom(async (value, { req }) => {
-      let field = await Field.findById(req.params.id);
+      let field = await Field.findById(req.params.fieldId);
       const isExist = await Field.exists({
         name: value,
         survey_id: field.survey_id
@@ -128,7 +128,7 @@ export const validateSurveyForUpdate = [
     .withMessage('survey name must be a string')
     .bail()
     .custom(async (value, { req }) => {
-      let survey = await Survey.findById(req.params.id);
+      let survey = await Survey.findById(req.params.surveyId);
       const isExist = await Survey.exists({
         name: value,
         campaign_id: survey.campaign_id

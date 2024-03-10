@@ -55,7 +55,7 @@ import AppError from '../utils/appError.js';
 
 export const getAllFields = catchAsync(async (req, res, next) => {
   let fields = req.body.survey.fields;
-  let surveyId = req.params.id;
+  let surveyId = req.params.surveyId;
   for (let field of fields) {
     let fieldDB = await Field.findById(field.id);
     if (!fieldDB) {
@@ -143,7 +143,7 @@ export const createNewField = catchAsync(async (req, res, next) => {
 });
 
 export const updateFieldById = catchAsync(async (req, res, next) => {
-  let fieldId = req.params.id;
+  let fieldId = req.params.fieldId;
   let field = await Field.findById(fieldId).populate('survey_id');
   if (!field) {
     return next(new AppError('Field not found', 404));
