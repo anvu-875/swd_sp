@@ -18,6 +18,8 @@ const surveySchema = new mongoose.Schema({
     ref: 'Campaign',
     required: [true, "Campaign's id is required."]
   }
-});
+},
+{ timestamps: true }
+);
 
 export const Survey = mongoose.model('Survey', surveySchema);

@@ -27,6 +27,8 @@ const responseSchema = new mongoose.Schema({
     ref: 'Survey',
     required: [true, "Survey's id is required."]
   }
-});
+}
+,{ timestamps: true }
+);
 
 export const Response = mongoose.model('Response', responseSchema);
